@@ -1,0 +1,57 @@
+/* Dark Theme (Default) */
+:root {
+  /* Background */
+  --bg: #0B1117;
+  --surface: #111827;
+  --card: #182033;
+  --card-border: #263149;
+
+  /* Brand Purple */
+  --primary: #7C3AED;
+  --primary-dark: #6D28D9;
+  --primary-light: #8B5CF6;
+
+  /* Accent Teal */
+  --teal: #14B8A6;
+  --teal-light: #22D3C5;
+
+  /* Notification Orange */
+  --orange: #F97316;
+  --orange-light: #FB923C;
+
+  /* Text */
+  --text: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+
+  /* Utility */
+  --white: #FFFFFF;
+}
+
+/* Light Theme - Turf Green & Cream */
+html[data-theme="light"] {
+  --bg: #F3EAD7;
+  --surface: #FAF6ED;
+  --card: #FFFFFF;
+  --card-border: #E3D9C2;
+
+  /* Brand Turf Green */
+  --primary: #0F6B3B;
+  --primary-dark: #0D5730;
+  --primary-light: #3D9467;
+
+  /* Accent Teal */
+  --teal: #14B8A6;
+  --teal-light: #22D3C5;
+
+  /* Notification Orange / Alert */
+  --orange: #B35A1F;
+  --orange-light: #FFCC33;
+
+  /* Text */
+  --text: #1F2A2E;
+  --text-secondary: #7A6F5C;
+  --text-muted: #A69C87;
+
+  --white: #FFFFFF;
+}
