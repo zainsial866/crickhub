@@ -16,7 +16,7 @@ export default function BookingsPage() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [cancellingBookingId, setCancellingBookingId] = useState<string | null>(null);
 
-  const { bookings, upcomingBookings, pastBookings, cancelBooking, loading } = useBookings();
+  const { bookings, upcomingBookings, pastBookings, cancelBooking } = useBookings();
 
   const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
 
