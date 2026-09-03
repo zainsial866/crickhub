@@ -8,7 +8,7 @@ import { Button } from '@/components/shared/Button';
 import { formatPKR, formatDisplayDate } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CheckCircle2, Ticket, CreditCard, Banknote, ShieldAlert } from 'lucide-react';
-import { useBookings } from '@/hooks/useBookings';
+import { useBookings, useBookings } from '@/hooks/useBookings';
 
 interface BookingModalProps {
   ground: Ground | null;
@@ -31,7 +31,7 @@ export function BookingModal({
   const [bookForTeam, setBookForTeam] = useState<boolean>(true);
   const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
 
-  const { createBooking, loading } = useBookings();
+  const { createBooking } = useBookings();
 
   if (!ground) return null;
 
@@ -210,14 +210,13 @@ export function BookingModal({
                 Cancel
               </Button>
               <Button
-                variant="primary"
-                size="md"
-                disabled={!selectedSlot}
-                isLoading={loading}
-                onClick={handleConfirm}
-              >
-                Confirm & Lock Slot
-              </Button>
+  variant="primary"
+  size="md"
+  disabled={!selectedSlot}
+  onClick={handleConfirm}
+>
+  Confirm & Lock Slot
+</Button>
             </div>
           </div>
         </div>
