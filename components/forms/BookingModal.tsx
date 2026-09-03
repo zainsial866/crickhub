@@ -8,7 +8,7 @@ import { Button } from '@/components/shared/Button';
 import { formatPKR, formatDisplayDate } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CheckCircle2, Ticket, CreditCard, Banknote, ShieldAlert } from 'lucide-react';
-import { useBookings, useBookings } from '@/hooks/useBookings';
+import { useBookings } from '@/hooks/useBookings';
 
 interface BookingModalProps {
   ground: Ground | null;
