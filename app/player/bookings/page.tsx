@@ -183,7 +183,6 @@ export default function BookingsPage() {
               <Button
                 variant="danger"
                 size="sm"
-                isLoading={loading}
                 onClick={handleConfirmCancel}
               >
                 Yes, Cancel Slot
