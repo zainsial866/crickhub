@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useBookings } from '@/hooks/useBookings';
+import { useTeams } from '@/hooks/useTeams';
 import { BookingCard } from '@/components/cards/BookingCard';
 import { Modal } from '@/components/shared/Modal';
 import { Button } from '@/components/shared/Button';
@@ -17,6 +19,8 @@ export default function BookingsPage() {
   const [cancellingBookingId, setCancellingBookingId] = useState<string | null>(null);
 
   const { bookings, upcomingBookings, pastBookings, cancelBooking } = useBookings();
+  const { createCricketMatch } = useTeams();
+  const router = useRouter();
 
   const displayedBookings = activeTab === 'upcoming' ? upcomingBookings : pastBookings;
 
@@ -25,6 +29,24 @@ export default function BookingsPage() {
       await cancelBooking(cancellingBookingId);
       setCancellingBookingId(null);
     }
+  };
+
+  const handleStartMatch = (booking: Booking) => {
+    const match = createCricketMatch({
+      bookingId: booking.id,
+      teamId: booking.teamId,
+      teamName: booking.teamName || 'My Team',
+      groundId: booking.groundId,
+      groundName: booking.groundName,
+      date: booking.date,
+      time: booking.slotTime,
+      overs: 10,
+      format: 'T10',
+      matchType: 'friendly',
+      opponentName: 'Add opponent team',
+      status: 'live',
+    });
+    router.push(`/player/matches/${match.id}/live`);
   };
 
   return (
@@ -96,6 +118,7 @@ export default function BookingsPage() {
               booking={b}
               onCancel={(id) => setCancellingBookingId(id)}
               onViewDetails={(booking) => setSelectedBooking(booking)}
+              onStartMatch={handleStartMatch}
             />
           ))}
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { GroundSlot } from '@/types';
 import { formatPKR, cn } from '@/lib/utils';
 import { Clock, Check } from 'lucide-react';
@@ -8,16 +8,16 @@ import { addDays, format } from 'date-fns';
 
 interface SlotPickerProps {
   slots: GroundSlot[];
-  selectedSlot: GroundSlot | null;
-  onSelectSlot: (slot: GroundSlot) => void;
+  selectedSlots: GroundSlot[];
+  onToggleSlot: (slot: GroundSlot) => void;
   selectedDate: string;
   onSelectDate: (dateStr: string) => void;
 }
 
 export function SlotPicker({
   slots,
-  selectedSlot,
-  onSelectSlot,
+  selectedSlots,
+  onToggleSlot,
   selectedDate,
   onSelectDate,
 }: SlotPickerProps) {
@@ -75,7 +75,8 @@ export function SlotPicker({
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
           {slots.map((slot) => {
-            const isSelected = selectedSlot?.id === slot.id;
+            const selectionIndex = selectedSlots.findIndex((selected) => selected.id === slot.id);
+            const isSelected = selectionIndex !== -1;
             const isAvailable = slot.isAvailable;
 
             return (
@@ -83,13 +84,13 @@ export function SlotPicker({
                 key={slot.id}
                 type="button"
                 disabled={!isAvailable}
-                onClick={() => onSelectSlot(slot)}
+                onClick={() => onToggleSlot(slot)}
                 className={cn(
                   'p-3 rounded-xl border text-left flex flex-col justify-between transition-all duration-200 relative',
                   !isAvailable
                     ? 'bg-surface/40 border-card-border/40 opacity-40 cursor-not-allowed'
                     : isSelected
-                    ? 'bg-primary text-white border-primary ring-2 ring-primary/40 shadow-lg shadow-primary/20 cursor-pointer'
+                    ? 'bg-primary/15 text-text-primary border-primary ring-2 ring-primary/40 shadow-lg shadow-primary/20 cursor-pointer'
                     : 'bg-surface border-card-border hover:border-primary/50 text-text-primary cursor-pointer hover:-translate-y-0.5'
                 )}
               >
@@ -97,11 +98,15 @@ export function SlotPicker({
                   <span className="text-xs font-bold font-mono">
                     {slot.startTime} - {slot.endTime}
                   </span>
-                  {isSelected && <Check className="w-3.5 h-3.5" />}
+                  {isSelected && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-primary text-white px-1.5 py-0.5 text-[9px] font-bold">
+                      <Check className="w-3 h-3" /> Slot {selectionIndex + 1} of {selectedSlots.length}
+                    </span>
+                  )}
                 </div>
 
                 <div className="mt-2 flex items-center justify-between text-[11px]">
-                  <span className={isSelected ? 'text-white/90' : 'text-primary-light font-bold'}>
+                  <span className={isSelected ? 'text-primary-light font-bold' : 'text-primary-light font-bold'}>
                     {formatPKR(slot.price)}
                   </span>
                   <span className="text-[9px] uppercase font-semibold opacity-80">

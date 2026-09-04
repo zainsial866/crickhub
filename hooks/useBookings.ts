@@ -23,7 +23,8 @@ export function useBookings() {
     date: string,
     totalPrice: number,
     paymentMethod: PaymentMethod,
-    teamName?: string
+    teamName?: string,
+    slotIds: string[] = []
   ): Promise<Booking> => {
     return createBookingStore(
       groundId,
@@ -33,7 +34,8 @@ export function useBookings() {
       date,
       totalPrice,
       paymentMethod,
-      teamName
+      teamName,
+      slotIds
     );
   };
 

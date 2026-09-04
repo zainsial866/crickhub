@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Card } from '@/components/shared/Card';
 import { Button } from '@/components/shared/Button';
@@ -163,9 +164,11 @@ export default function AdminGroundsPage() {
         >
           <div className="space-y-4 text-xs">
             <div className="rounded-xl overflow-hidden h-44 w-full">
-              <img
+              <Image
                 src={inspectingGround.imageUrl}
                 alt={inspectingGround.name}
+                width={440}
+                height={176}
                 className="w-full h-full object-cover"
               />
             </div>

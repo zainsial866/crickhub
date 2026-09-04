@@ -20,10 +20,11 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-card-border px-4 py-3 sm:px-6">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+    <header className="fixed top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-40 bg-surface/90 backdrop-blur-md border border-card-border rounded-2xl shadow-xl shadow-black/15 px-3 py-3 sm:px-6">
+      <div className="w-full flex items-center justify-between gap-3">
         {/* Left: Brand / Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 group">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-dark via-primary to-primary-light flex items-center justify-center text-white shadow-md shadow-primary/20 text-lg font-black group-hover:scale-105 transition-transform">
             🏏
           </div>
@@ -36,7 +37,8 @@ export function Header() {
             </span>
             <p className="text-[11px] text-text-muted hidden sm:block">Islamabad & Rawalpindi Arenas</p>
           </div>
-        </Link>
+          </Link>
+        </div>
 
         {/* Center: Role Switcher Shortcut Bar */}
         <div className="hidden lg:flex items-center bg-card border border-card-border p-1 rounded-xl gap-1 text-xs">

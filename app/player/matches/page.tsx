@@ -1,0 +1,15 @@
+'use client';
+
+import React, { useMemo, useState } from 'react';
+import Link from 'next/link';
+import { ArrowLeft, ArrowRight, CalendarDays } from 'lucide-react';
+import { useTeams } from '@/hooks/useTeams';
+import { Card } from '@/components/shared/Card';
+
+export default function MatchHistoryPage() {
+  const { cricketMatches, myTeams } = useTeams();
+  const [format, setFormat] = useState('all');
+  const [teamId, setTeamId] = useState('all');
+  const matches = useMemo(() => cricketMatches.filter((match) => match.status === 'completed' && (format === 'all' || (match.format || '').toLowerCase() === format.toLowerCase()) && (teamId === 'all' || match.teamId === teamId)).slice().reverse(), [cricketMatches, format, teamId]);
+  return <div className="space-y-6 pb-16"><Link href="/player/leaderboard" className="inline-flex items-center gap-2 text-xs font-bold text-text-secondary hover:text-primary-light"><ArrowLeft className="h-4 w-4" />Back to CricketHub</Link><div><p className="text-[10px] font-black tracking-[0.18em] text-text-muted">MATCHES</p><h1 className="mt-1 text-3xl font-black text-text-primary">Match History</h1><p className="mt-2 text-sm text-text-secondary">Review completed fixtures and open their full scorecards.</p></div><div className="flex flex-wrap gap-3"><select value={teamId} onChange={(event) => setTeamId(event.target.value)} className="rounded-xl border border-card-border bg-card px-3 py-2 text-sm text-text-primary"><option value="all">All Teams</option>{myTeams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}</select><select value={format} onChange={(event) => setFormat(event.target.value)} className="rounded-xl border border-card-border bg-card px-3 py-2 text-sm text-text-primary"><option value="all">All Formats</option><option value="T10">T10</option><option value="T20">T20</option><option value="Other">Other</option></select></div><div className="space-y-3">{matches.map((match) => <Card key={match.id} className="border-card-border p-5"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><div className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-primary-light" /><span className="text-xs text-text-muted">{match.format || `T${match.overs}`} · {match.date}</span></div><h2 className="mt-2 text-base font-black text-text-primary">{match.teamName} {match.teamScore ?? 0}/{match.teamWickets ?? 0}</h2><h2 className="text-base font-black text-text-primary">{match.opponentName} {match.opponentScore ?? 0}/{match.opponentWickets ?? 0}</h2><p className="mt-2 text-xs text-text-secondary">{match.margin || 'Match completed'}</p></div><Link href={`/player/matches/${match.id}`} className="inline-flex items-center gap-1 text-xs font-bold text-primary-light hover:underline">View Scorecard <ArrowRight className="h-3.5 w-3.5" /></Link></div></Card>)}{matches.length === 0 && <Card className="p-8 text-center text-sm text-text-muted">No matches match these filters.</Card>}</div></div>;
+}

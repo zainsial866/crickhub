@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Ground, GroundSlot, PaymentMethod, Booking } from '@/types';
 import { Modal } from '@/components/shared/Modal';
 import { SlotPicker } from '@/components/cards/SlotPicker';
@@ -26,28 +26,63 @@ export function BookingModal({
   onSuccess,
 }: BookingModalProps) {
   const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'));
-  const [selectedSlot, setSelectedSlot] = useState<GroundSlot | null>(null);
+  const [selectedSlotIds, setSelectedSlotIds] = useState<string[]>([]);
+  const [selectionWarning, setSelectionWarning] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash_on_ground');
   const [bookForTeam, setBookForTeam] = useState<boolean>(true);
   const [confirmedBooking, setConfirmedBooking] = useState<Booking | null>(null);
 
   const { createBooking } = useBookings();
 
+  const selectedSlots = useMemo(
+    () => slots.filter((slot) => selectedSlotIds.includes(slot.id)),
+    [selectedSlotIds, slots]
+  );
+  const totalPrice = selectedSlots.reduce((total, slot) => total + slot.price, 0);
+  const totalMinutes = selectedSlots.length * 60;
+
+  const handleToggleSlot = (slot: GroundSlot) => {
+    setSelectionWarning('');
+
+    if (selectedSlotIds.includes(slot.id)) {
+      setSelectedSlotIds((current) => current.filter((id) => id !== slot.id));
+      return;
+    }
+
+    const nextIds = [...selectedSlotIds, slot.id];
+    const selectedIndexes = slots
+      .map((candidate, index) => (nextIds.includes(candidate.id) ? index : -1))
+      .filter((index) => index !== -1);
+    const firstIndex = Math.min(...selectedIndexes);
+    const lastIndex = Math.max(...selectedIndexes);
+    const interval = slots.slice(firstIndex, lastIndex + 1);
+
+    if (interval.some((candidate) => !candidate.isAvailable)) {
+      setSelectionWarning('Selected slots must be continuous. The slot between them is unavailable.');
+      return;
+    }
+
+    setSelectedSlotIds(interval.map((candidate) => candidate.id));
+  };
+
   if (!ground) return null;
 
   const handleConfirm = async () => {
-    if (!selectedSlot) return;
+    if (selectedSlots.length === 0) return;
 
     try {
+      const firstSlot = selectedSlots[0];
+      const lastSlot = selectedSlots[selectedSlots.length - 1];
       const booking = await createBooking(
         ground.id,
         ground.name,
         ground.location,
-        `${selectedSlot.startTime} - ${selectedSlot.endTime}`,
+        `${firstSlot.startTime} - ${lastSlot.endTime}`,
         selectedDate,
-        selectedSlot.price,
+        totalPrice,
         paymentMethod,
-        bookForTeam ? 'Islamabad Strikers' : undefined
+        bookForTeam ? 'Islamabad Strikers' : undefined,
+        selectedSlotIds
       );
       setConfirmedBooking(booking);
       if (onSuccess) onSuccess(booking);
@@ -58,7 +93,8 @@ export function BookingModal({
 
   const handleClose = () => {
     setConfirmedBooking(null);
-    setSelectedSlot(null);
+    setSelectedSlotIds([]);
+    setSelectionWarning('');
     onClose();
   };
 
@@ -128,11 +164,17 @@ export function BookingModal({
           {/* Interactive Slot Grid */}
           <SlotPicker
             slots={slots}
-            selectedSlot={selectedSlot}
-            onSelectSlot={setSelectedSlot}
+            selectedSlots={selectedSlots}
+            onToggleSlot={handleToggleSlot}
             selectedDate={selectedDate}
             onSelectDate={setSelectedDate}
           />
+
+          {selectionWarning && (
+            <div className="rounded-xl border border-orange/30 bg-orange/10 px-3 py-2 text-xs text-orange" role="alert">
+              {selectionWarning}
+            </div>
+          )}
 
           {/* Payment Method Selector */}
           <div>
@@ -200,9 +242,16 @@ export function BookingModal({
           <div className="pt-3 border-t border-card-border flex items-center justify-between gap-3">
             <div>
               <span className="text-[10px] uppercase font-bold text-text-muted block">Estimated Total</span>
-              <span className="text-lg font-black text-primary-light">
-                {selectedSlot ? formatPKR(selectedSlot.price) : 'Select a slot'}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-black text-primary-light">
+                  {selectedSlots.length ? formatPKR(totalPrice) : 'Select a slot'}
+                </span>
+                {selectedSlots.length > 0 && (
+                  <span className="rounded-full bg-primary/10 border border-primary/20 px-2 py-1 text-[10px] font-bold text-primary-light">
+                    Selected: {Math.floor(totalMinutes / 60)} Hours / {totalMinutes} Mins
+                  </span>
+                )}
+              </div>
             </div>
 
             <div className="flex items-center gap-2">
@@ -210,13 +259,15 @@ export function BookingModal({
                 Cancel
               </Button>
               <Button
-  variant="primary"
-  size="md"
-  disabled={!selectedSlot}
-  onClick={handleConfirm}
->
-  Confirm & Lock Slot
-</Button>
+                variant="primary"
+                size="md"
+                disabled={!selectedSlots.length}
+                onClick={handleConfirm}
+              >
+                {selectedSlots.length
+                  ? `Confirm ${selectedSlots.length} Slot${selectedSlots.length === 1 ? '' : 's'} — ${formatPKR(totalPrice)}`
+                  : 'Select a slot'}
+              </Button>
             </div>
           </div>
         </div>

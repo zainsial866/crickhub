@@ -14,6 +14,7 @@ export interface Booking {
   groundLocation: string;
   groundImageUrl?: string;
   slotTime: string;       // e.g. "08:00 PM - 09:00 PM"
+  slotIds?: string[];
   date: string;           // "2026-09-05"
   totalPrice: number;     // in PKR
   status: BookingStatus;

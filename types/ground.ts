@@ -8,6 +8,10 @@ export interface GroundSlot {
   price: number;     // in PKR
   isAvailable: boolean;
   date?: string;     // 'YYYY-MM-DD'
+  bookingType?: 'online' | 'manual';
+  teamName?: string;
+  managerPhone?: string;
+  lockedUntil?: string;
 }
 
 export interface GroundAmenity {

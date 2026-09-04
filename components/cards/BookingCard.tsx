@@ -12,9 +12,10 @@ interface BookingCardProps {
   booking: Booking;
   onCancel?: (bookingId: string) => void;
   onViewDetails?: (booking: Booking) => void;
+  onStartMatch?: (booking: Booking) => void;
 }
 
-export function BookingCard({ booking, onCancel, onViewDetails }: BookingCardProps) {
+export function BookingCard({ booking, onCancel, onViewDetails, onStartMatch }: BookingCardProps) {
   const statusVariant = {
     confirmed: 'success',
     pending: 'orange',
@@ -110,6 +111,16 @@ export function BookingCard({ booking, onCancel, onViewDetails }: BookingCardPro
               rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
             >
               Details
+            </Button>
+          )}
+          {onStartMatch && booking.status === 'confirmed' && (
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={() => onStartMatch(booking)}
+              className="text-xs py-1.5"
+            >
+              Start Match
             </Button>
           )}
         </div>

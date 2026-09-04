@@ -1,0 +1,26 @@
+'use client';
+
+import React, { useMemo, useState } from 'react';
+import Link from 'next/link';
+import { ArrowLeft, ArrowRight, Search, Trophy } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useTeams } from '@/hooks/useTeams';
+import { Card } from '@/components/shared/Card';
+import { Badge } from '@/components/shared/Badge';
+
+export default function PublicPlayerPage() {
+  const { playerId } = useParams<{ playerId: string }>();
+  const { publicTeams, myTeams, cricketMatches, playerDirectory } = useTeams();
+  const [format, setFormat] = useState('all');
+  const [time, setTime] = useState('all');
+  const teams = Array.from(new Map([...publicTeams, ...myTeams].map((team) => [team.id, team])).values());
+  const player = playerDirectory.find((entry) => entry.id === playerId) || teams.flatMap((team) => team.members).find((entry) => entry.id === playerId);
+  const playerMatches = useMemo(() => cricketMatches.filter((match) => match.status === 'completed' && (format === 'all' || (match.format || '').toLowerCase() === format.toLowerCase()) && (time === 'all' || (time === 'season' && match.date.startsWith('2026')))).filter((match) => match.playerStats.some((stat) => stat.playerId === playerId || stat.playerName.toLowerCase() === player?.name.toLowerCase())), [cricketMatches, format, player?.name, playerId, time]);
+
+  if (!player) return <Card className="p-10 text-center text-sm text-text-muted">Player not found.</Card>;
+
+  const summary = playerMatches.reduce((total, match) => { const stat = match.playerStats.find((entry) => entry.playerId === playerId || entry.playerName.toLowerCase() === player.name.toLowerCase()); return { matches: total.matches + 1, runs: total.runs + (stat?.runs || 0), balls: total.balls + (stat?.balls || 0), wickets: total.wickets + (stat?.wickets || 0), catches: total.catches + (stat?.catches || 0) }; }, { matches: 0, runs: 0, balls: 0, wickets: 0, catches: 0 });
+  const playerTeams = teams.filter((team) => team.members.some((member) => member.id === playerId || member.name === player.name));
+
+  return <div className="space-y-6 pb-16"><Link href="/player/leaderboard" className="inline-flex items-center gap-2 text-xs font-bold text-text-secondary hover:text-primary-light"><ArrowLeft className="h-4 w-4" />Back to CricketHub</Link><Card className="border-card-border bg-gradient-to-br from-card via-surface to-card p-6 sm:p-8"><div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"><div><Badge variant="teal" size="sm">CRICKETHUB PLAYER</Badge><h1 className="mt-3 text-3xl font-black text-text-primary">{player.name}</h1><p className="mt-1 text-sm capitalize text-text-secondary">{player.playingRole.replace('_', ' ')} · Career across every team</p></div><Trophy className="h-8 w-8 text-amber-400" /></div><div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5">{[['Matches', summary.matches], ['Runs', summary.runs], ['Average', (summary.runs / Math.max(summary.matches, 1)).toFixed(1)], ['Strike Rate', ((summary.runs / Math.max(summary.balls, 1)) * 100).toFixed(1)], ['Wickets', summary.wickets]].map(([label, value]) => <div key={String(label)} className="rounded-xl bg-bg p-3"><p className="text-lg font-black text-primary-light">{value}</p><p className="text-[10px] uppercase tracking-wider text-text-muted">{label}</p></div>)}</div></Card><div className="flex flex-wrap gap-3"><select value={format} onChange={(event) => setFormat(event.target.value)} className="rounded-xl border border-card-border bg-card px-3 py-2 text-sm text-text-primary"><option value="all">All Formats</option><option value="T10">T10</option><option value="T20">T20</option><option value="Other">Other</option></select><select value={time} onChange={(event) => setTime(event.target.value)} className="rounded-xl border border-card-border bg-card px-3 py-2 text-sm text-text-primary"><option value="all">All Time</option><option value="season">This Season</option></select></div><Card className="border-card-border p-5"><h2 className="text-lg font-black text-text-primary">Teams Played For</h2><div className="mt-4 grid gap-3 sm:grid-cols-2">{playerTeams.map((team) => <Link key={team.id} href={`/teams/${team.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`} className="flex items-center justify-between rounded-xl bg-card px-4 py-3 text-sm font-bold text-text-primary hover:text-primary-light"><span>{team.name}</span><ArrowRight className="h-4 w-4" /></Link>)}</div></Card><Card className="border-card-border p-5"><h2 className="text-lg font-black text-text-primary">Career Performance</h2><div className="mt-4 space-y-2">{playerMatches.slice(-6).reverse().map((match) => { const stat = match.playerStats.find((entry) => entry.playerId === playerId || entry.playerName.toLowerCase() === player.name.toLowerCase()); return <Link key={match.id} href={`/player/matches/${match.id}`} className="flex items-center justify-between rounded-xl border-b border-card-border py-3 text-xs hover:text-primary-light"><span className="font-bold">vs {match.opponentName}</span><span className="text-text-secondary">{stat?.runs || 0} runs · {stat?.wickets || 0} wickets</span></Link>; })}</div></Card></div>;
+}

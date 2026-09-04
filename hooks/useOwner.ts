@@ -7,6 +7,8 @@ export function useOwner() {
   const slots = useAppStore((state) => state.slots);
   const bookings = useAppStore((state) => state.bookings);
   const toggleSlotAvailability = useAppStore((state) => state.toggleSlotAvailability);
+  const bulkSetSlotAvailability = useAppStore((state) => state.bulkSetSlotAvailability);
+  const reserveSlotsManually = useAppStore((state) => state.reserveSlotsManually);
   const updateSlotPrice = useAppStore((state) => state.updateSlotPrice);
 
   const ownerGround = grounds[0]; // Primary facility for owner demo
@@ -20,6 +22,8 @@ export function useOwner() {
     bookings: ownerBookings,
     allBookings: bookings,
     toggleSlotAvailability,
+    bulkSetSlotAvailability,
+    reserveSlotsManually,
     updateSlotPrice,
   };
 }
