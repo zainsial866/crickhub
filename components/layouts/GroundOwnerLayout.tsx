@@ -38,7 +38,7 @@ export function GroundOwnerLayout({ children }: { children: React.ReactNode }) {
       <Header />
       <div className="flex-1 flex w-full pt-24">
         <Sidebar isOpen={isSidebarOpen} width={sidebarWidth} onToggle={() => setIsSidebarOpen((open) => !open)} onResizeStart={() => window.dispatchEvent(new Event('sidebar-resize-start'))} />
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 transition-[margin] duration-200" style={{ marginLeft: isSidebarOpen ? sidebarWidth + 32 : 96 }}>
+        <main className="ml-0 flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pb-24 md:pb-8 transition-[margin] duration-200 md:ml-[var(--sidebar-offset)]" style={{ '--sidebar-offset': `${isSidebarOpen ? sidebarWidth + 32 : 96}px` } as React.CSSProperties}>
           {children}
         </main>
       </div>

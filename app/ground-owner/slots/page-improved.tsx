@@ -97,7 +97,7 @@ export default function OwnerSlotsPage() {
   const openSlotsCount = currentDaySlots.filter((s) => s.isAvailable).length;
 
   return (
-    <div className="w-full space-y-6 sm:space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Page Header */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

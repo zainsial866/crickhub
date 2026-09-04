@@ -65,7 +65,7 @@ export default function DiscoverPage() {
     searchQuery.length > 0;
 
   return (
-    <div className="w-full space-y-6 pb-16">
+    <div className="mx-auto w-full max-w-7xl space-y-6 pb-16">
       {/* Hero Section with Stats */}
       <section className="rounded-3xl border border-card-border bg-gradient-to-br from-card via-surface to-card p-6 sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -316,7 +316,7 @@ export default function DiscoverPage() {
 
       {/* Grounds Grid */}
       {grounds.length > 0 ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {grounds.map((ground) => (
             <GroundCard
               key={ground.id}

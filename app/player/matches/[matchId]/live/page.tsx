@@ -527,7 +527,7 @@ export default function LiveMatchPage() {
       firstInningsBattingTeam === "team" ? firstInningsScore : score;
     const opponentScore =
       firstInningsBattingTeam === "opponent" ? firstInningsScore : score;
-    const result =
+    const result: "win" | "loss" | "draw" =
       teamScore > opponentScore
         ? "win"
         : teamScore < opponentScore
